@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+
+	<property resource="init.properties" />
+
+	<!-- <property resource="WEB-INF/config.properties" /> -->
+	<if condition='isNull("log.debug")'>
+		<then>
+			<property resource="../init.properties" />
+		</then>
+	</if>
+
+	<property name="useraction_pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}[%level]-%msg%n" />
+	<property name="stdout_pattern" value="%d[%thread{8}] %logger{36} %-5level - %msg%n" />
+	<property name="info_pattern"
+		value="%d{yyyy-MM-dd HH:mm:ss} %logger{16} %-5level - %msg%n" />
+	<property name="warn_pattern"
+		value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} %-5level -%msg%n" />
+	<property name="error_pattern"
+		value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} %-5level -%msg%n" />
+	<!-- <property file="config.properties" /> -->
+	<!-- if debug -->
+	<if condition="${log.debug}">
+		<then>
+			<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"> <!-- encoders are by default assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+				<encoder>
+					<pattern>${stdout_pattern}</pattern>
+				</encoder>
+			</appender>
+			<logger name="org.mybatis.spring" level="info" />
+			<root level="debug">
+				<appender-ref ref="STDOUT" />
+			</root>
+		</then>
+	</if>
+	<!-- if not debug -->
+	<if condition="!${log.debug}">
+		<then>
+			<appender name="INFO_FILE"
+				class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<fileNamePattern>${log.path}/info/%d{yyyyMMdd}.log
+					</fileNamePattern>
+				</rollingPolicy>
+				<encoder>
+					<pattern>${info_pattern}</pattern>
+				</encoder>
+				<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+					<level>INFO</level>
+				</filter>
+			</appender>
+			<appender name="WARN_FILE"
+				class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<fileNamePattern>${log.path}/warn/%d{yyyyMMdd}.log
+					</fileNamePattern>
+				</rollingPolicy>
+				<encoder>
+					<pattern>${warn_pattern}</pattern>
+				</encoder>
+				<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+					<level>WARN</level>
+				</filter>
+			</appender>
+			<appender name="ERROR_FILE"
+				class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<fileNamePattern>${log.path}/error/%d{yyyyMMdd}.log
+					</fileNamePattern>
+				</rollingPolicy>
+				<encoder>
+					<pattern>${error_pattern}</pattern>
+				</encoder>
+				<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+					<level>ERROR</level>
+				</filter>
+			</appender>
+			<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+				<encoder>
+					<pattern>${stdout_pattern}</pattern>
+				</encoder>
+			</appender>
+			<appender name="USER_ACTION_FILE"
+				class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<fileNamePattern>${log.path}/user_action/%d{yyyyMMdd}.log
+					</fileNamePattern>
+				</rollingPolicy>
+				<encoder>
+					<pattern>${info_pattern}</pattern>
+				</encoder>
+				<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+					<evaluator>
+						<expression>
+							return message.contains("--->");
+						</expression>
+						<OnMatch>ACCEPT</OnMatch>
+						<OnMismatch>DENY</OnMismatch>
+					</evaluator>
+				</filter>
+				<filter class="ch.qos.logback.classic.filter.LevelFilter">
+					<level>INFO</level>
+					<OnMatch>ACCEPT</OnMatch>
+					<OnMismatch>DENY</OnMismatch>
+				</filter>
+			</appender>
+			<logger name="org.cyhz.app.sct.filter" additivity="true"
+				level="INFO">
+				<appender-ref ref="USER_ACTION_FILE" />
+			</logger>
+
+			<logger name="org.mybatis.spring" level="warn" />
+			<logger name="org.springframework" level="warn" />
+			<root level="info">
+				<appender-ref ref="STDOUT" />
+				<appender-ref ref="INFO_FILE" />
+				<appender-ref ref="WARN_FILE" />
+				<appender-ref ref="ERROR_FILE" />
+			</root>
+		</then>
+	</if>
+</configuration>

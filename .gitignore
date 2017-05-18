@@ -1,0 +1,13 @@
+/classes
+/.settings
+/target
+.classpath
+*.jar
+*.war
+*.ear
+.project
+/bin
+*.class
+.settings
+jzg_view/src/test/*
+generatorConfig.xml
