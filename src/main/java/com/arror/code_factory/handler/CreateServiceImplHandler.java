@@ -19,10 +19,12 @@ public class CreateServiceImplHandler {
 
 	@Value("${dataBase}")
 	private String dataBase;
+	@Value("${basePackage}")
+	private String basePackage;
 	@Resource
 	private DataBaseDAO dataBaseDao;
 
-	// »ñÈ¡±íÊôĞÔ
+	// è·å–è¡¨å±æ€§
 	public void createServiceImpl(String table, String baseFile) {
 		String tableDesc = "";
 		TableDO tableDo = dataBaseDao.getTable(dataBase, table);
@@ -30,15 +32,15 @@ public class CreateServiceImplHandler {
 			tableDesc = tableDo.getTableComment();
 		}
 		String className = ClassUtil.translateFirstUp(table);
-		// »ñÈ¡ÄÚÈİ
+		// è·å–å†…å®¹
 		String content = getCreateDaoContent(table, tableDesc);
-		// Ğ´ÎÄ¼ş
+		// å†™æ–‡ä»¶
 		WriteUtil
 				.write(baseFile, className, content, ClassTypeEnmu.SERVICEIMPL);
 	}
 
 	/**
-	 * »ñÈ¡Éú³ÉPOÀàÄÚÈİ
+	 * è·å–ç”ŸæˆPOç±»å†…å®¹
 	 * 
 	 * @param columnList
 	 * @param table
@@ -47,38 +49,42 @@ public class CreateServiceImplHandler {
 	 */
 	private String getCreateDaoContent(String table, String tableDesc) {
 		StringBuilder content = new StringBuilder();
-		// ÀàµÄÃû×Ö
+		// ç±»çš„åå­—
 		String className = ClassUtil.translateFirstUp(table);
 		String humpClass = ClassUtil.translateHump(table);
 		String pojoName = className + "DO";
 		humpClass = humpClass + "Dao";
-		// Àà¾ßÌåÄÚÈİ
-		// import ÆäËüÀà
+		// ç±»å…·ä½“å†…å®¹
+		// basePageå†…å®¹
+		content.append("package ").append(basePackage)
+				.append(".service.data.impl;").append("\n");
+		// import å…¶å®ƒç±»
 		content.append(importProperties());
-		// ×¢ÊÍ
+		content.append(importPoJoProperties(className));
+		// æ³¨é‡Š
 		content.append(ClassUtil.classNote(tableDesc));
-		// ÀàµÄÍ·²¿
+		// ç±»çš„å¤´éƒ¨
 		content.append("@Service\n").append("public class ").append(className)
 				.append("ServiceImpl implements ").append(className)
 				.append("Service").append(" {").append("\n\n");
 
-		// ÒıÈëÀà
+		// å¼•å…¥ç±»
 		content.append(importClass(table));
-		// ¸ù¾İid»ñÈ¡¶ÔÏó
+		// æ ¹æ®idè·å–å¯¹è±¡
 		content.append(getById(pojoName, humpClass));
-		// ¸ù¾İid¼¯ºÏ»ñÈ¡¶à¸ö¶ÔÏó
+		// æ ¹æ®idé›†åˆè·å–å¤šä¸ªå¯¹è±¡
 		content.append(listByIds(pojoName, humpClass));
-		// ±£´æ¶ÔÏó
+		// ä¿å­˜å¯¹è±¡
 		content.append(save(className, humpClass));
-		// ±£´æ¶à¸ö¶ÔÏó
+		// ä¿å­˜å¤šä¸ªå¯¹è±¡
 		content.append(saveList(pojoName, humpClass));
-		// Î²²¿
+		// å°¾éƒ¨
 		content.append("\n").append("}");
 		return content.toString();
 	}
 
 	private String importClass(String table) {
-		// ÀàµÄÃû×Ö
+		// ç±»çš„åå­—
 		String className = ClassUtil.translateFirstUp(table);
 		String humpClass = ClassUtil.translateHump(table);
 		className = className + "DAO";
@@ -91,7 +97,7 @@ public class CreateServiceImplHandler {
 
 	private String getById(String pojoName, String humpClass) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(ClassUtil.methondNote()).append("	 *¸ù¾İid»ñÈ¡¶ÔÏó")
+		sb.append(ClassUtil.methondNote()).append("	 *æ ¹æ®idè·å–å¯¹è±¡")
 				.append(pojoName).append("\n").append("	 */").append("\n")
 				.append("	@Override\n");
 		sb.append("	public ").append(pojoName)
@@ -103,7 +109,7 @@ public class CreateServiceImplHandler {
 
 	private String listByIds(String pojoName, String humpClass) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(ClassUtil.methondNote()).append("	 *¸ù¾İid¼¯ºÏ»ñÈ¡¶ÔÏólist<")
+		sb.append(ClassUtil.methondNote()).append("	 *æ ¹æ®idé›†åˆè·å–å¯¹è±¡list<")
 				.append(pojoName).append(">\n").append("	 */").append("\n")
 				.append("	@Override\n");
 		sb.append("	public List<")
@@ -121,8 +127,9 @@ public class CreateServiceImplHandler {
 		StringBuilder sb = new StringBuilder();
 		String pojoName = className + "DO";
 		className = className + "Do";
-		sb.append(ClassUtil.methondNote()).append("	 *±£´æ").append(pojoName)
-				.append("\n").append("	 */").append("\n").append("	@Override\n");
+		sb.append(ClassUtil.methondNote()).append("	 *ä¿å­˜").append(pojoName)
+				.append("\n").append("	 */").append("\n")
+				.append("	@Override\n");
 		sb.append("	public void ").append("save(").append(pojoName).append(" ")
 				.append(className).append(") {\n\n").append("			")
 				.append(humpClass).append(".save(").append(className)
@@ -132,8 +139,9 @@ public class CreateServiceImplHandler {
 
 	private String saveList(String pojoName, String humpClass) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(ClassUtil.methondNote()).append("	 *±£´æ¶à¸ö").append(pojoName)
-				.append("\n").append("	 */").append("\n").append("	@Override\n");
+		sb.append(ClassUtil.methondNote()).append("	 *ä¿å­˜å¤šä¸ª").append(pojoName)
+				.append("\n").append("	 */").append("\n")
+				.append("	@Override\n");
 		sb.append("	public void ")
 				.append("saveList(List<")
 				.append(pojoName)
@@ -146,7 +154,7 @@ public class CreateServiceImplHandler {
 	}
 
 	/**
-	 * PoJoÌí¼ÓÒıÓÃ
+	 * PoJoæ·»åŠ å¼•ç”¨
 	 * 
 	 * @param columnList
 	 * @return
@@ -157,6 +165,24 @@ public class CreateServiceImplHandler {
 		sb.append("import java.util.List;\n");
 		sb.append("import javax.annotation.Resource;\n");
 		sb.append("import org.springframework.stereotype.Service;\n");
+		return sb.toString();
+	}
+
+	/**
+	 * PoJoæ·»åŠ å¼•ç”¨
+	 * 
+	 * @param columnList
+	 * @return
+	 */
+	private String importPoJoProperties(String className) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("import ").append(basePackage).append(".domain.")
+				.append(className + "DO;").append("\n");
+		sb.append("import ").append(basePackage).append(".dao.")
+				.append(className + "DAO;").append("\n");
+		sb.append("import ").append(basePackage).append(".service.data.")
+				.append(className + "Service;").append("\n");
+
 		return sb.toString();
 	}
 }

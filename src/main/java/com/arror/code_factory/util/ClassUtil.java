@@ -5,7 +5,7 @@ package com.arror.code_factory.util;
  */
 public class ClassUtil {
 	/**
-	 * ½«×Ö·û´®×ª»»ÎªÍÕ·åÃüÃû
+	 * å°†å­—ç¬¦ä¸²è½¬æ¢ä¸ºé©¼å³°å‘½å
 	 * 
 	 * @param target
 	 * @return
@@ -31,7 +31,7 @@ public class ClassUtil {
 	}
 
 	/**
-	 * ½«×Ö·û´®×ª»»ÎªÊ××ÖÄ¸´óĞ´µÄÍÕ·åÃüÃû
+	 * å°†å­—ç¬¦ä¸²è½¬æ¢ä¸ºé¦–å­—æ¯å¤§å†™çš„é©¼å³°å‘½å
 	 * 
 	 * @param target
 	 * @return
@@ -60,7 +60,7 @@ public class ClassUtil {
 		return sb.toString();
 	}
 
-	// ·½·¨µÄ×¢ÊÍ
+	// æ–¹æ³•çš„æ³¨é‡Š
 	public static String methondNote() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n	/**").append("\n").append("	 *").append("\n");

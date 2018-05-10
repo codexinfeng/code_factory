@@ -3,20 +3,20 @@ package com.arror.code_factory.model;
 /**
  * @author zhangxianbin
  * 
- *         ±í×Ö¶ÎÊôĞÔ
+ *         è¡¨å­—æ®µå±æ€§
  */
 public class TableColumnDO {
 	/**
-	 * ×Ö¶ÎÃû
+	 * å­—æ®µå
 	 */
 	private String columnName;
 	/**
-	 * ×Ö¶ÎÀàĞÍ
+	 * å­—æ®µç±»å‹
 	 */
 	private String dataType;
 
 	/**
-	 * ×Ö¶ÎÃèÊö
+	 * å­—æ®µæè¿°
 	 */
 	private String columnComment;
 

@@ -13,14 +13,14 @@ import com.arror.code_factory.model.TableDO;
 public interface DataBaseDAO {
 
 	/**
-	 * »ñÈ¡¿âÀïÃæËùÓĞµÄ±í
+	 * è·å–åº“é‡Œé¢æ‰€æœ‰çš„è¡¨
 	 * 
 	 * @return
 	 */
 	List<String> listTables();
 
 	/**
-	 * »ñÈ¡database¿âÀï±íÃûÎªtableµÄÊôĞÔ
+	 * è·å–databaseåº“é‡Œè¡¨åä¸ºtableçš„å±æ€§
 	 * 
 	 * @param dataBase
 	 * @param table
@@ -30,7 +30,7 @@ public interface DataBaseDAO {
 			@Param("tableName") String tableName);
 
 	/**
-	 * »ñÈ¡±í×¢ÊÍ
+	 * è·å–è¡¨æ³¨é‡Š
 	 * 
 	 * @param dataBase
 	 * @param tableName

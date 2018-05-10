@@ -25,12 +25,14 @@ public class CreatePoJoHandler {
 
 	@Value("${dataBase}")
 	private String dataBase;
+	@Value("${basePackage}")
+	private String basePackage;
 	@Resource
 	private DataBaseDAO dataBaseDao;
 
-	// »ñÈ¡±íÊôĞÔ
+	// è·å–è¡¨å±æ€§
 	public void createPojo(String table, String baseFile) {
-		// »ñÈ¡±íµÄÁĞÊôĞÔ
+		// è·å–è¡¨çš„åˆ—å±æ€§
 		List<TableColumnDO> columnList = dataBaseDao.listTableColumns(dataBase,
 				table);
 		String tableDesc = "";
@@ -38,16 +40,16 @@ public class CreatePoJoHandler {
 		if (tableDo != null) {
 			tableDesc = tableDo.getTableComment();
 		}
-		// ÀàµÄÃû×Ö
+		// ç±»çš„åå­—
 		String className = ClassUtil.translateFirstUp(table);
-		// »ñÈ¡ÄÚÈİ
+		// è·å–å†…å®¹
 		String content = getCreatePojoContent(columnList, className, tableDesc);
-		// Ğ´ÎÄ¼ş
+		// å†™æ–‡ä»¶
 		WriteUtil.write(baseFile, className, content, ClassTypeEnmu.POJO);
 	}
 
 	/**
-	 * »ñÈ¡Éú³ÉPOÀàÄÚÈİ
+	 * è·å–ç”ŸæˆPOç±»å†…å®¹
 	 * 
 	 * @param columnList
 	 * @param table
@@ -57,20 +59,22 @@ public class CreatePoJoHandler {
 	private String getCreatePojoContent(List<TableColumnDO> columnList,
 			String className, String tableDesc) {
 		StringBuilder content = new StringBuilder();
-		// Àà¾ßÌåÄÚÈİ
-		// import ÊôĞÔ
+		// ç±»å…·ä½“å†…å®¹
+		// basePageå†…å®¹
+		content.append("package ").append(basePackage).append(".domain;").append("\n");
+		// import å±æ€§
 		content.append(importPoJoProperties(columnList));
-		// ×¢ÊÍ
+		// æ³¨é‡Š
 		content.append(ClassUtil.classNote(tableDesc));
-		// Àà
+		// ç±»
 		content.append("public class ").append(className).append("DO ")
 				.append("{").append("\n");
 
-		// ÊôĞÔ¶¨Òå
+		// å±æ€§å®šä¹‰
 		for (TableColumnDO columnDo : columnList) {
 			content.append(getDefineProperty(columnDo));
 		}
-		// get set¶¨Òå
+		// get setå®šä¹‰
 		for (TableColumnDO columnDo : columnList) {
 			content.append(getDefineGetAndSet(columnDo));
 		}
@@ -79,7 +83,7 @@ public class CreatePoJoHandler {
 	}
 
 	/**
-	 * PoJoÌí¼ÓÒıÓÃ
+	 * PoJoæ·»åŠ å¼•ç”¨
 	 * 
 	 * @param columnList
 	 * @return
@@ -89,7 +93,7 @@ public class CreatePoJoHandler {
 		if (columnList == null || columnList.isEmpty()) {
 			return "";
 		}
-		// importÊôĞÔ
+		// importå±æ€§
 		Set<String> colunSet = new HashSet<>();
 		for (TableColumnDO column : columnList) {
 			colunSet.add(TableUtil.typeMap.get(column.getDataType()));
@@ -110,7 +114,7 @@ public class CreatePoJoHandler {
 	}
 
 	/**
-	 * ¶¨ÒåÊôĞÔ
+	 * å®šä¹‰å±æ€§
 	 * 
 	 * @param columnDo
 	 * @return
@@ -133,7 +137,7 @@ public class CreatePoJoHandler {
 	}
 
 	/**
-	 * set get·½·¨
+	 * set getæ–¹æ³•
 	 * 
 	 * @param columnDo
 	 * @return
@@ -141,7 +145,7 @@ public class CreatePoJoHandler {
 	private String getDefineGetAndSet(TableColumnDO columnDo) {
 		StringBuilder sb = new StringBuilder();
 		String columnName = columnDo.getColumnName();
-		// ÍÕ·åÃüÃûÑùÊ½
+		// é©¼å³°å‘½åæ ·å¼
 		String transHump = ClassUtil.translateHump(columnName);
 		String dataType = columnDo.getDataType();
 		sb.append("\n	public ").append(TableUtil.typeMap.get(dataType))

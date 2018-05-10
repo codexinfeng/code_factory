@@ -11,7 +11,7 @@ import com.arror.code_factory.enums.ClassTypeEnmu;
  * @author zhangxianbin
  */
 public class WriteUtil {
-	// д�ļ�
+	// д�ļ�
 	public static void write(String baseFile, String className, String content,
 			ClassTypeEnmu enums) {
 		String fileName = "";
@@ -24,7 +24,7 @@ public class WriteUtil {
 			className = className + "DAO.java";
 		}
 		if (enums == ClassTypeEnmu.XML) {
-			fileName = baseFile + "dao";
+			fileName = baseFile + "xml";
 			className = className + "DAO.xml";
 		}
 		if (enums == ClassTypeEnmu.SERVICE) {

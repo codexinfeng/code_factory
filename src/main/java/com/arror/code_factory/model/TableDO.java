@@ -3,16 +3,16 @@ package com.arror.code_factory.model;
 /**
  * @author zhangxianbin
  * 
- *         表属性
+ *         卤铆脢么脨脭
  */
 public class TableDO {
 
 	/**
-	 * 表名
+	 * 卤铆脙没
 	 */
 	private String tableName;
 	/**
-	 * 表注释
+	 * 卤铆脳垄脢脥
 	 */
 	private String tableComment;
 

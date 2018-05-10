@@ -22,24 +22,27 @@ public class CreateXmlHandler {
 
 	@Value("${dataBase}")
 	private String dataBase;
+	@Value("${basePackage}")
+	private String basePackage;
 	@Resource
 	private DataBaseDAO dataBaseDao;
 
-	// »ñÈ¡±íÊôĞÔ
+	// è·å–è¡¨å±æ€§
 	public void createXml(String table, String baseFile) {
-		// »ñÈ¡±íµÄÁĞÊôĞÔ
+		// è·å–è¡¨çš„åˆ—å±æ€§
 		List<TableColumnDO> columnList = dataBaseDao.listTableColumns(dataBase,
 				table);
-		// // ÀàµÄÃû×Ö
-		String content = getCreateXmlContent(table, columnList);
-		// ÀàµÄÃû×Ö
+		// ç±»çš„åå­—
 		String className = ClassUtil.translateFirstUp(table);
-		// Ğ´ÎÄ¼ş
+		// // ç±»çš„åå­—
+		String content = getCreateXmlContent(table, columnList);
+
+		// å†™æ–‡ä»¶
 		WriteUtil.write(baseFile, className, content, ClassTypeEnmu.XML);
 	}
 
 	/**
-	 * »ñÈ¡Éú³ÉPOÀàÄÚÈİ
+	 * è·å–ç”ŸæˆPOç±»å†…å®¹
 	 * 
 	 * @param columnList
 	 * @param table
@@ -49,40 +52,51 @@ public class CreateXmlHandler {
 	private String getCreateXmlContent(String table,
 			List<TableColumnDO> columnList) {
 		StringBuilder content = new StringBuilder();
-		// Àà¾ßÌåÄÚÈİ
-		// xml¹æ·¶
+		// ç±»å…·ä½“å†…å®¹
+		// xmlè§„èŒƒ
 		content.append(xmlRule());
-		// ±£´æ
-		content.append(save(table, columnList));
-		// ±£´æ¶à¸ö
+		String className = ClassUtil.translateFirstUp(table);
+		content.append(mapper(className));
+		// ä¿å­˜
+		content.append(save(table, columnList, className));
+		// ä¿å­˜å¤šä¸ª
 		content.append(saveList(table, columnList));
-		// »ñÈ¡µ¥¸ö
-		content.append(getById(table, columnList));
-		// »ñÈ¡¶à¸ö
-		content.append(listByIds(table, columnList));
+		// è·å–å•ä¸ª
+		content.append(getById(table, columnList, className));
+		// è·å–å¤šä¸ª
+		content.append(listByIds(table, columnList, className));
 		content.append("\n\n</mapper>");
 		return content.toString();
 	}
 
 	/**
-	 * PoJoÌí¼ÓÒıÓÃ
+	 * PoJoæ·»åŠ å¼•ç”¨
 	 * 
 	 * @param columnList
 	 * @return
 	 */
 	private String xmlRule() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n    <!DOCTYPE mapper\n        PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\"\n        \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n<mapper namespace=\"\">\n\n");
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n    <!DOCTYPE mapper\n        PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\"\n        \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n");
 		return sb.toString();
 	}
 
-	// ±£´æµ¥¸ö
-	private String save(String table, List<TableColumnDO> columnList) {
+	private String mapper(String className) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(
-				"	<insert id=\"save\" parameterType=\"\" >\n		insert into ")
-				.append(table).append("( ");
-		// ÊôĞÔ¶¨Òå
+		sb.append("<mapper namespace=\"").append(basePackage).append(".dao.")
+				.append(className).append("DAO\">\n\n");
+		return sb.toString();
+
+	}
+
+	// ä¿å­˜å•ä¸ª
+	private String save(String table, List<TableColumnDO> columnList,
+			String className) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("	<insert id=\"save\" parameterType=\"").append(basePackage)
+				.append(".domain.").append(className).append("DO")
+				.append("\" >\n		insert into ").append(table).append("( ");
+		// å±æ€§å®šä¹‰
 		for (int i = 0; i < columnList.size(); i++) {
 			TableColumnDO columnDo = columnList.get(i);
 			sb.append(columnDo.getColumnName());
@@ -116,13 +130,13 @@ public class CreateXmlHandler {
 		return sb.toString();
 	}
 
-	// ±£´æ¶à¸ö
+	// ä¿å­˜å¤šä¸ª
 	private String saveList(String table, List<TableColumnDO> columnList) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(
 				"\n	<insert id=\"saveList\" parameterType=\"java.util.List\" >\n		insert into ")
 				.append(table).append("( ");
-		// ÊôĞÔ¶¨Òå
+		// å±æ€§å®šä¹‰
 		for (int i = 0; i < columnList.size(); i++) {
 			TableColumnDO columnDo = columnList.get(i);
 			sb.append(columnDo.getColumnName());
@@ -160,10 +174,13 @@ public class CreateXmlHandler {
 		return sb.toString();
 	}
 
-	// ±£´æµ¥¸ö
-	private String getById(String table, List<TableColumnDO> columnList) {
+	// ä¿å­˜å•ä¸ª
+	private String getById(String table, List<TableColumnDO> columnList,
+			String className) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("\n	<select id=\"getById\" resultType=\"\" >\n		select ");
+		sb.append("\n	<select id=\"getById\" resultType=\"")
+				.append(basePackage).append(".domain.").append(className)
+				.append("DO").append("\" >\n		select ");
 		for (int i = 0; i < columnList.size(); i++) {
 			TableColumnDO columnDo = columnList.get(i);
 			String columnName = columnDo.getColumnName();
@@ -178,10 +195,13 @@ public class CreateXmlHandler {
 		return sb.toString();
 	}
 
-	// ±£´æµ¥¸ö
-	private String listByIds(String table, List<TableColumnDO> columnList) {
+	// ä¿å­˜å•ä¸ª
+	private String listByIds(String table, List<TableColumnDO> columnList,
+			String className) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("\n	<select id=\"listByIds\" resultType=\"\" >\n		select ");
+		sb.append("\n	<select id=\"listByIds\" resultType=\"")
+				.append(basePackage).append(".domain.").append(className)
+				.append("DO").append("\" >\n		select ");
 		for (int i = 0; i < columnList.size(); i++) {
 			TableColumnDO columnDo = columnList.get(i);
 			String columnName = columnDo.getColumnName();

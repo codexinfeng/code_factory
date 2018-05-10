@@ -31,24 +31,20 @@ public class GenerateTableSqlHandler {
 		String baseFile = System.getProperty("user.dir") + File.separator
 				+ "code" + File.separator;
 		List<String> tableList = dataBaseDao.listTables();
-		String table = "area_city";
-		// for (String table : tableList) {
+		// String table = "area_city";
+		for (String table : tableList) {
 
-		createPoJoHandler.createPojo(table, baseFile);
-		System.out.println("PO 类初始化完毕");
-		// DAO类创建
-		createDaoHandler.createDao(table, baseFile);
-		System.out.println("DAO 类初始化完毕");
-		// SERVICE类创建
-		createServiceHandler.createService(table, baseFile);
-		System.out.println("SERVICE 类初始化完毕");
-		// SERVICE类创建
-		createServiceImplHandler.createServiceImpl(table, baseFile);
-		System.out.println("SERVICEIMPL 类初始化完毕");
-		// SERVICE类创建
-		createXmlHandler.createXml(table, baseFile);
-		System.out.println("XML 初始化完毕");
-		// }
+			createPoJoHandler.createPojo(table, baseFile);
+			System.out.println("Pojo鐢熸垚瀹屾瘯");
+			createDaoHandler.createDao(table, baseFile);
+			System.out.println("DAO鐢熸垚瀹屾瘯");
+			createServiceHandler.createService(table, baseFile);
+			System.out.println("SERVICE鐢熸垚瀹屾瘯");
+			createServiceImplHandler.createServiceImpl(table, baseFile);
+			System.out.println("SERVICEIMPL鐢熸垚瀹屾瘯");
+			createXmlHandler.createXml(table, baseFile);
+			System.out.println("XML鐢熸垚瀹屾瘯");
+		}
 
 	}
 
