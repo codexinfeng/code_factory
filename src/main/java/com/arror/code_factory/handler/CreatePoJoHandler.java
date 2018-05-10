@@ -61,7 +61,8 @@ public class CreatePoJoHandler {
 		StringBuilder content = new StringBuilder();
 		// 类具体内容
 		// basePage内容
-		content.append("package ").append(basePackage).append(".domain;").append("\n");
+		content.append("package ").append(basePackage).append(".domain;")
+				.append("\n");
 		// import 属性
 		content.append(importPoJoProperties(columnList));
 		// 注释
@@ -98,18 +99,13 @@ public class CreatePoJoHandler {
 		for (TableColumnDO column : columnList) {
 			colunSet.add(TableUtil.typeMap.get(column.getDataType()));
 		}
+		if (colunSet.contains("Date")) {
+			sb.append("import java.util.Date;").append("\n");
+		}
 		if (colunSet.contains("BigDecimal")) {
 			sb.append("import java.math.BigDecimal;");
 		}
-		String tempImport = sb.toString();
-		if (colunSet.contains("Date")) {
-			if (!"".equals(tempImport)) {
-				sb.append("\n");
-			} else {
-				sb.append("import java.util.Date;");
-			}
 
-		}
 		return sb.toString();
 	}
 
