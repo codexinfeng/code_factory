@@ -101,7 +101,7 @@ public class CreateServiceHandler {
 		sb.append(ClassUtil.methondNote()).append("	 *保存").append(pojoName)
 				.append("\n").append("	 *").append(" @param ")
 				.append(humpClass).append("Do\n").append("	 */").append("\n");
-		sb.append("	public void ").append("save(").append(pojoName).append(" ")
+		sb.append("	public int ").append("save(").append(pojoName).append(" ")
 				.append(humpClass).append("Do);\n");
 		return sb.toString();
 	}

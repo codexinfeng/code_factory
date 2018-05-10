@@ -93,7 +93,7 @@ public class CreateXmlHandler {
 	private String save(String table, List<TableColumnDO> columnList,
 			String className) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("	<insert id=\"save\" parameterType=\"").append(basePackage)
+		sb.append("	<insert id=\"save\" useGeneratedKeys=\"true\" keyProperty=\"id\" parameterType=\"").append(basePackage)
 				.append(".domain.").append(className).append("DO")
 				.append("\" >\n		insert into ").append(table).append("( ");
 		// 属性定义

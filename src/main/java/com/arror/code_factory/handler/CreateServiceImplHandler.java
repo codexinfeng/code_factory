@@ -130,7 +130,7 @@ public class CreateServiceImplHandler {
 		sb.append(ClassUtil.methondNote()).append("	 *保存").append(pojoName)
 				.append("\n").append("	 */").append("\n")
 				.append("	@Override\n");
-		sb.append("	public void ").append("save(").append(pojoName).append(" ")
+		sb.append("	public int ").append("save(").append(pojoName).append(" ")
 				.append(className).append(") {\n\n").append("			")
 				.append(humpClass).append(".save(").append(className)
 				.append(");\n\n	}");
