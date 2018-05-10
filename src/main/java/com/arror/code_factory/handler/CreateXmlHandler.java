@@ -190,7 +190,7 @@ public class CreateXmlHandler {
 			}
 		}
 		sb.append(" from ").append(table).append(" where id=#{id}");
-		sb.append("\n	<select>");
+		sb.append("\n	</select>");
 
 		return sb.toString();
 	}
