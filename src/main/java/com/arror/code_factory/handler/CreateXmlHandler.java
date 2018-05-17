@@ -57,14 +57,17 @@ public class CreateXmlHandler {
 		content.append(xmlRule());
 		String className = ClassUtil.translateFirstUp(table);
 		content.append(mapper(className));
+		// sql的定义
+		String columns = columns(columnList);
+		content.append(columns);
 		// 保存
 		content.append(save(table, columnList, className));
 		// 保存多个
 		content.append(saveList(table, columnList));
 		// 获取单个
-		content.append(getById(table, columnList, className));
+		content.append(getById(table, className));
 		// 获取多个
-		content.append(listByIds(table, columnList, className));
+		content.append(listByIds(table, className));
 		content.append("\n\n</mapper>");
 		return content.toString();
 	}
@@ -89,16 +92,36 @@ public class CreateXmlHandler {
 
 	}
 
+	private String columns(List<TableColumnDO> columnList) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("	<sql id=\"columns\">");
+		for (int i = 0; i < columnList.size(); i++) {
+			TableColumnDO columnDo = columnList.get(i);
+			sb.append(columnDo.getColumnName()).append(" as ");
+			sb.append(ClassUtil.translateHump(columnDo.getColumnName()));
+			if (i != columnList.size() - 1) {
+				sb.append(",");
+			}
+		}
+		sb.append("</sql>\n");
+		return sb.toString();
+	}
+
 	// 保存单个
 	private String save(String table, List<TableColumnDO> columnList,
 			String className) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("	<insert id=\"save\" useGeneratedKeys=\"true\" keyProperty=\"id\" parameterType=\"").append(basePackage)
-				.append(".domain.").append(className).append("DO")
-				.append("\" >\n		insert into ").append(table).append("( ");
+		sb.append(
+				"	<insert id=\"save\" useGeneratedKeys=\"true\" keyProperty=\"id\" parameterType=\"")
+				.append(basePackage).append(".domain.").append(className)
+				.append("DO").append("\" >\n		insert into ").append(table)
+				.append("( ");
 		// 属性定义
 		for (int i = 0; i < columnList.size(); i++) {
 			TableColumnDO columnDo = columnList.get(i);
+			if (columnDo.getColumnName().equals("id")) {
+				continue;
+			}
 			sb.append(columnDo.getColumnName());
 			if (i != columnList.size() - 1) {
 				sb.append(", ");
@@ -110,6 +133,9 @@ public class CreateXmlHandler {
 		dateList.add("update_time");
 		for (int i = 0; i < columnList.size(); i++) {
 			TableColumnDO columnDo = columnList.get(i);
+			if (columnDo.getColumnName().equals("id")) {
+				continue;
+			}
 			String columnName = columnDo.getColumnName();
 			if (dateList.contains(columnName)) {
 				sb.append("now()");
@@ -124,7 +150,7 @@ public class CreateXmlHandler {
 				}
 			}
 		}
-		sb.append("}");
+		sb.append(")");
 		sb.append("\n	</insert>");
 
 		return sb.toString();
@@ -139,6 +165,9 @@ public class CreateXmlHandler {
 		// 属性定义
 		for (int i = 0; i < columnList.size(); i++) {
 			TableColumnDO columnDo = columnList.get(i);
+			if (columnDo.getColumnName().equals("id")) {
+				continue;
+			}
 			sb.append(columnDo.getColumnName());
 			if (i != columnList.size() - 1) {
 				sb.append(", ");
@@ -153,6 +182,9 @@ public class CreateXmlHandler {
 		dateList.add("update_time");
 		for (int i = 0; i < columnList.size(); i++) {
 			TableColumnDO columnDo = columnList.get(i);
+			if (columnDo.getColumnName().equals("id")) {
+				continue;
+			}
 			String columnName = columnDo.getColumnName();
 			if (dateList.contains(columnName)) {
 				sb.append("now()");
@@ -174,42 +206,27 @@ public class CreateXmlHandler {
 		return sb.toString();
 	}
 
-	// 保存单个
-	private String getById(String table, List<TableColumnDO> columnList,
-			String className) {
+	// 获取单个
+	private String getById(String table, String className) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n	<select id=\"getById\" resultType=\"")
 				.append(basePackage).append(".domain.").append(className)
-				.append("DO").append("\" >\n		select ");
-		for (int i = 0; i < columnList.size(); i++) {
-			TableColumnDO columnDo = columnList.get(i);
-			String columnName = columnDo.getColumnName();
-			sb.append(columnName);
-			if (i != columnList.size() - 1) {
-				sb.append(",");
-			}
-		}
+				.append("DO").append("\" >\n		select ")
+				.append("<include refid=\"columns\"/>");
 		sb.append(" from ").append(table).append(" where id=#{id}");
 		sb.append("\n	</select>");
 
 		return sb.toString();
 	}
 
-	// 保存单个
-	private String listByIds(String table, List<TableColumnDO> columnList,
-			String className) {
+	// 获取多个
+	private String listByIds(String table, String className) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n	<select id=\"listByIds\" resultType=\"")
 				.append(basePackage).append(".domain.").append(className)
-				.append("DO").append("\" >\n		select ");
-		for (int i = 0; i < columnList.size(); i++) {
-			TableColumnDO columnDo = columnList.get(i);
-			String columnName = columnDo.getColumnName();
-			sb.append(columnName);
-			if (i != columnList.size() - 1) {
-				sb.append(",");
-			}
-		}
+				.append("DO").append("\" >\n		select ")
+				.append("<include refid=\"columns\"/>");
+
 		sb.append(" from ").append(table).append(" where id in");
 		sb.append("\n		<foreach collection=\"list\" item=\"item\" separator=\",\" open=\"(\" close=\")\">\n");
 		sb.append("				#{item}\n");

@@ -131,7 +131,7 @@ public class CreateServiceImplHandler {
 				.append("\n").append("	 */").append("\n")
 				.append("	@Override\n");
 		sb.append("	public int ").append("save(").append(pojoName).append(" ")
-				.append(className).append(") {\n\n").append("			")
+				.append(className).append(") {\n\n").append("			").append("return ")
 				.append(humpClass).append(".save(").append(className)
 				.append(");\n\n	}");
 		return sb.toString();
