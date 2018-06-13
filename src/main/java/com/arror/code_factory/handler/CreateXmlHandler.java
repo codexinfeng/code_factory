@@ -192,7 +192,7 @@ public class CreateXmlHandler {
 					sb.append(",");
 				}
 			} else {
-				sb.append("#{").append(
+				sb.append("#{item.").append(
 						ClassUtil.translateHump(columnDo.getColumnName()));
 				if (i != columnList.size() - 1) {
 					sb.append("},");

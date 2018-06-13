@@ -126,13 +126,13 @@ public class CreateServiceImplHandler {
 	private String save(String className, String humpClass) {
 		StringBuilder sb = new StringBuilder();
 		String pojoName = className + "DO";
-		className = className + "Do";
+		className = className.substring(0, 1).toLowerCase()+className.substring(1) + "Do";
 		sb.append(ClassUtil.methondNote()).append("	 *保存").append(pojoName)
 				.append("\n").append("	 */").append("\n")
 				.append("	@Override\n");
 		sb.append("	public int ").append("save(").append(pojoName).append(" ")
-				.append(humpClass).append(") {\n\n").append("			").append("return ")
-				.append(humpClass).append(".save(").append(humpClass)
+				.append(className).append(") {\n\n").append("			").append("return ")
+				.append(humpClass).append(".save(").append(className)
 				.append(");\n\n	}");
 		return sb.toString();
 	}
