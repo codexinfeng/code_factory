@@ -147,6 +147,8 @@ public class CreateXmlHandler {
 						ClassUtil.translateHump(columnDo.getColumnName()));
 				if (i != columnList.size() - 1) {
 					sb.append("},");
+				}else{
+					sb.append("}");
 				}
 			}
 		}
